@@ -224,12 +224,12 @@ class MidiGenerator:
         
         midi_stream = stream.Stream(output_notes)
         index = 0
-        filename_add_index = f"{filename}{str(index)}.mid"
-        while os.path.exists(filename_add_index):
+        filepath = f"./data/output/{filename}{str(index)}.mid"
+        while os.path.exists(filepath):
             index += 1
-            filename_add_index = f"{filename}{str(index)}.mid"
-        midi_stream.write('midi', fp=filename_add_index)
-        print(f"MIDI file saved as {filename_add_index}")
+            filepath = f"./data/output/{filename}{str(index)}.mid"
+        midi_stream.write('midi', fp=filepath)
+        print(f"MIDI file saved as {filename}{str(index)}.mid")
 
 def main():
     try:
