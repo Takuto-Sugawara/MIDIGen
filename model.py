@@ -249,7 +249,7 @@ def main():
         # モデルの作成と学習
         print("Creating and training model...")
         model = generator.create_model(n_vocab)
-        model.fit(network_input, network_output, epochs=10 batch_size=64, verbose=1)
+        model.fit(network_input, network_output, epochs=10, batch_size=64, verbose=1)
         
         # 新しい曲の生成
         print("Generating new music...")
