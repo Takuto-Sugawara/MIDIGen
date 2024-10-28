@@ -193,7 +193,7 @@ class MidiGenerator:
         
         return prediction_output
     
-    def create_midi(self, prediction_output, filename="generated_output.mid"):
+    def create_midi(self, prediction_output, filename="generated_output"):
         """生成したノート列からMIDIファイルを作成"""
         offset = 0
         output_notes = []
@@ -223,8 +223,13 @@ class MidiGenerator:
                 continue
         
         midi_stream = stream.Stream(output_notes)
-        midi_stream.write('midi', fp=filename)
-        print(f"MIDI file saved as {filename}")
+        index = 0
+        filename_add_index = f"{filename}{str(index)}.mid"
+        while os.path.exists(filename_add_index):
+            index += 1
+            filename_add_index = f"{filename}{str(index)}.mid"
+        midi_stream.write('midi', fp=filename_add_index)
+        print(f"MIDI file saved as {filename_add_index}")
 
 def main():
     try:
