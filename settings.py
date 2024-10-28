@@ -1,1 +1,1 @@
-midi_path = "/data/midi_data/*.mid"
+MIDI_PATH = "/data/midi_data/*.mid"
