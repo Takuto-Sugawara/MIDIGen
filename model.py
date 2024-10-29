@@ -231,6 +231,10 @@ class MidiGenerator:
         midi_stream.write('midi', fp=filepath)
         print(f"MIDI file saved as {filename}{str(index)}.mid")
 
+
+#以下をipynbに移動+評価
+
+
 def main():
     try:
         #　学習データのパスを設定
