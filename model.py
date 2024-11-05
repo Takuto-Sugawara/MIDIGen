@@ -184,7 +184,7 @@ class MidiGenerator:
             
             prediction = self.model.predict(prediction_input, verbose=0)
             
-
+            #確率的にノートを選択
             index = np.random.choice(len(prediction[0]), p=prediction[0])
             result = self.int_to_note[index]
             prediction_output.append(result)
