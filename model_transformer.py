@@ -1,8 +1,16 @@
 import torch
+import torch.nn as nn
 import music21
 import numpy as np
 import os 
 import settings
+
+
+def grab_divice_type():
+    #GPUが利用可能ならGPUを利用する
+    pass
+
+
 
 
 
