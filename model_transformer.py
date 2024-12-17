@@ -29,14 +29,14 @@ class MIDIgen(nn.Module):
     def backward(self, x):
         pass
 
-    def grab_divice_type(enable_gpu=True):
-        if torch.cuda.is_available() and enable_gpu:
-            device = torch.device("cuda")
-        elif torch.backends.mps.is_available() and enable_gpu:
-            device = torch.device("mps")
-        else:
-            device = torch.device("cpu")
-        return device
+def grab_divice_type(enable_gpu=True):
+    if torch.cuda.is_available() and enable_gpu:
+        device = torch.device("cuda")
+    elif torch.backends.mps.is_available() and enable_gpu:
+        device = torch.device("mps")
+    else:
+        device = torch.device("cpu")
+    return device
 
 
 def write_output_midi():
@@ -44,10 +44,10 @@ def write_output_midi():
     #これはgeneration.pyに移行
     pass
 
-
 def main():
     try:
-        model = MIDIgen(sequence_length=100).to(model.grab_divice_type())
+        torch.manual_seed(42)
+        model = MIDIgen(sequence_length=100).to(grab_divice_type())
         #デバッグ用
         #cudaを使っているか確認
         print(f"is_cuda: {next(model.parameters()).is_cuda}")
@@ -58,7 +58,6 @@ def main():
 
         #ここで学習したモデルを保存
         torch.save(model.state_dict(), "./model.pt")
-
 
     except Exception as e:
         print(f"An error occurred: {str(e)}")
