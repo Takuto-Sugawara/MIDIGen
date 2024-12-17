@@ -14,13 +14,18 @@ class MIDIgen(nn.Module):
         self.flatten = nn.Flatten()
         self.LSTM = nn.LSTM(input_size=4, hidden_size=256, num_layers=1, batch_first=True)
         #input_size: 入力の特徴量の数(dim: pitch, velocity, duration, time)
-        self.dropout = nn.Dropout(dropout_rate=0.1)
-        self.linear = nn.Linear(128, 128)
+        self.dropout = nn.Dropout(0.1)
+        self.linear = nn.Linear(256, 256)
         self.ReLU = nn.ReLU()
         self.optimizer = torch.optim.Adam(self.parameters(), lr=0.001)
 
     def forward(self, x):
-        pass
+        x = self.flatten(x)
+        x = self.LSTM(x)
+        x = self.dropout(x)
+        x = self.linear(x)
+        x = self.ReLU(x)
+        return x
 
     def backward(self, x):
         pass
@@ -33,7 +38,7 @@ def grab_divice_type(enable_gpu=True):
     if torch.cuda.is_available() and enable_gpu:
         device = torch.device("cuda")
     elif torch.backends.mps.is_available() and enable_gpu:
-        device = torch.device("cpu")
+        device = torch.device("mps")
     else:
         device = torch.device("cpu")
     return device
@@ -46,7 +51,18 @@ def write_output_midi():
 
 def main():
     try:
-        print("hogehoge")
+        model = MIDIgen(sequence_length=100).to(model.device)
+        #デバッグ用
+        #cudaを使っているか確認
+        print(f"is_cuda: {next(model.parameters()).is_cuda}")
+        print(model)
+        #デバッグ用ここまで
+        model.train()
+        #ここでデータを読み込んで学習する
+
+        #ここで学習したモデルを保存しない！このファイルをimportしてnotebookで学習、保存する
+
+
     except Exception as e:
         print(f"An error occurred: {str(e)}")
 
