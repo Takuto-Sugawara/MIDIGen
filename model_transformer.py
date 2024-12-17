@@ -1,5 +1,7 @@
+import glob
 import torch
 import torch.nn as nn
+from tqdm import tqdm
 import mido
 import numpy as np
 import os 
@@ -38,6 +40,19 @@ def grab_divice_type(enable_gpu=True):
         device = torch.device("cpu")
     return device
 
+def tokenize_midi(train_data_path):#未完成！！！！！
+    #midiファイルを読み込んで、トークン化する
+    if not glob.glob(train_data_path):
+        raise ValueError(f"No MIDI files found in {train_data_path}")
+    print(f"Found {len(glob.glob(train_data_path))} MIDI files")
+    print(f"Loading MIDI files from {train_data_path}")
+    for midi_file in tqdm(glob.glob(train_data_path)):
+        midi = mido.MidiFile(midi_file)
+        for i, track in enumerate(midi.tracks):
+            print(f"Track {i}: {track.name}")
+            for msg in track:
+                print(msg)
+
 
 def write_output_midi():
     #outputMIDIファイルを適切なファイル名で保存する
@@ -46,6 +61,9 @@ def write_output_midi():
 
 def main():
     try:
+        #データのパスを取得
+        train_data_path = settings.TEST_MIDI_PATH
+        #モデルを初期化
         torch.manual_seed(42)
         model = MIDIgen(sequence_length=100).to(grab_divice_type())
         #デバッグ用
@@ -55,7 +73,7 @@ def main():
         #デバッグ用ここまで
         model.train()
         #ここでデータを読み込んで学習する
-
+        tokenize_midi(train_data_path)
         #ここで学習したモデルを保存
         torch.save(model.state_dict(), "./model.pt")
 
