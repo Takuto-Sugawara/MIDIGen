@@ -184,7 +184,7 @@ class MidiGenerator:
             
             prediction = self.model.predict(prediction_input, verbose=0)
             
-            # 確率的な選択
+            #確率的にノートを選択
             index = np.random.choice(len(prediction[0]), p=prediction[0])
             result = self.int_to_note[index]
             prediction_output.append(result)
@@ -231,13 +231,17 @@ class MidiGenerator:
         midi_stream.write('midi', fp=filepath)
         print(f"MIDI file saved as {filename}{str(index)}.mid")
 
+
+#以下をipynbに移動+評価
+
+
 def main():
     try:
         #　学習データのパスを設定
         midi_path = settings.MIDI_PATH
 
         # モデルの初期化
-        generator = MidiGenerator(sequence_length=50)
+        generator = MidiGenerator(sequence_length = settings.sequence_length)
         
         #指定パスにMIDIファイルがあるか確認
         if not glob.glob(midi_path):
@@ -254,7 +258,10 @@ def main():
         # モデルの作成と学習
         print("Creating and training model...")
         model = generator.create_model(n_vocab)
-        model.fit(network_input, network_output, epochs=10, batch_size=64, verbose=1)
+        model.fit(network_input, network_output, epochs=20, batch_size=64, verbose=1)
+        model.summary()
+
+        #ここまでがtrain.pyの内容?
         
         # 新しい曲の生成
         print("Generating new music...")
