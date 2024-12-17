@@ -3,6 +3,7 @@ import torch
 import torch.nn as nn
 from tqdm import tqdm
 import mido
+import music21
 import numpy as np
 import os 
 import settings
@@ -41,23 +42,36 @@ def grab_divice_type(enable_gpu=True):
     return device
 
 def tokenize_midi(train_data_path):#未完成！！！！！
-    #midiファイルを読み込んで、トークン化する
+    #midiファイルを読み込む
+    midi_notes = []
+    midi_chords = []
+    midi_data = [midi_notes, midi_chords]
     if not glob.glob(train_data_path):
         raise ValueError(f"No MIDI files found in {train_data_path}")
     print(f"Found {len(glob.glob(train_data_path))} MIDI files")
     print(f"Loading MIDI files from {train_data_path}")
     for midi_file in tqdm(glob.glob(train_data_path)):
-        midi = mido.MidiFile(midi_file)
-        for i, track in enumerate(midi.tracks):
-            print(f"Track {i}: {track.name}")
-            for msg in track:
-                print(msg)
+        midi = music21.converter.parse(midi_file)
+        for ele in midi.flatten().notes:
+            print(ele)
 
+    tokenized_midi_data = []
+    #midiデータをトークン化する
+    return tokenized_midi_data
 
-def write_output_midi():
+#一旦noteとchordに分けて、それぞれの特徴量を取得するといい？
+
+def write_output_midi(output_midi_data):
     #outputMIDIファイルを適切なファイル名で保存する
     #これはgeneration.pyに移行
-    pass
+    midi_stream = music21.stream.Stream(output_midi_data)
+    index = 0
+    filepath = f"./data/output/generated_output{str(index)}.mid"
+    while os.path.exists(filepath):
+        index += 1
+        filepath = f"./data/output/generated_output{str(index)}.mid"
+        midi_stream.write('midi', fp=filepath)
+    print(f"MIDI file saved as generated_output{str(index)}.mid")
 
 def main():
     try:
