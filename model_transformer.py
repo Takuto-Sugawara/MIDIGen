@@ -14,7 +14,7 @@ class MIDIgen(nn.Module):
         self.flatten = nn.Flatten()
         self.LSTM = nn.LSTM(input_size=4, hidden_size=256, num_layers=1, batch_first=True)
         #input_size: 入力の特徴量の数(dim: pitch, velocity, duration, time)
-        self.dropout = nn.Dropout(0.1)
+        self.dropout = nn.Dropout(p=0.1)
         self.linear = nn.Linear(256, 256)
         self.ReLU = nn.ReLU()
         self.optimizer = torch.optim.Adam(self.parameters(), lr=0.001)
@@ -46,6 +46,7 @@ def grab_divice_type(enable_gpu=True):
 
 def write_output_midi():
     #outputMIDIファイルを適切なファイル名で保存する
+    #これはgeneration.pyに移行
     pass
 
 
@@ -60,7 +61,8 @@ def main():
         model.train()
         #ここでデータを読み込んで学習する
 
-        #ここで学習したモデルを保存しない！このファイルをimportしてnotebookで学習、保存する
+        #ここで学習したモデルを保存
+        torch.save(model.state_dict(), "./model.pt")
 
 
     except Exception as e:
