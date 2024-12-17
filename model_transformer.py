@@ -10,7 +10,6 @@ class MIDIgen(nn.Module):
     def __init__(self, sequence_length):
         super().__init__()
         self.sequence_length = sequence_length
-        self.device = grab_divice_type()
         self.flatten = nn.Flatten()
         self.LSTM = nn.LSTM(input_size=4, hidden_size=256, num_layers=1, batch_first=True)
         #input_size: 入力の特徴量の数(dim: pitch, velocity, duration, time)
@@ -30,18 +29,14 @@ class MIDIgen(nn.Module):
     def backward(self, x):
         pass
 
-
-
-
-
-def grab_divice_type(enable_gpu=True):
-    if torch.cuda.is_available() and enable_gpu:
-        device = torch.device("cuda")
-    elif torch.backends.mps.is_available() and enable_gpu:
-        device = torch.device("mps")
-    else:
-        device = torch.device("cpu")
-    return device
+    def grab_divice_type(enable_gpu=True):
+        if torch.cuda.is_available() and enable_gpu:
+            device = torch.device("cuda")
+        elif torch.backends.mps.is_available() and enable_gpu:
+            device = torch.device("mps")
+        else:
+            device = torch.device("cpu")
+        return device
 
 
 def write_output_midi():
@@ -52,7 +47,7 @@ def write_output_midi():
 
 def main():
     try:
-        model = MIDIgen(sequence_length=100).to(model.device)
+        model = MIDIgen(sequence_length=100).to(model.grab_divice_type())
         #デバッグ用
         #cudaを使っているか確認
         print(f"is_cuda: {next(model.parameters()).is_cuda}")
