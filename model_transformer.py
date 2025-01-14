@@ -41,19 +41,31 @@ def grab_divice_type(enable_gpu=True):
         device = torch.device("cpu")
     return device
 
-def tokenize_midi(train_data_path):#未完成！！！！！
+def get_midi_list(train_data_path):
+    midi_paths = glob.glob(train_data_path)
+    #正しく読み込んだか確認用
+    if not midi_paths:
+        raise ValueError(f"No MIDI files found in {train_data_path}")
+    print(f"Total Files: {len(midi_paths)}")
+    print("MIDI Files:")
+    for midi_path in midi_paths:
+        print(midi_path + "\n")
+    
+    return midi_paths
+    
+
+def tokenize_midi(midi_paths):#未完成！！！！！
     #midiファイルを読み込む
     midi_notes = []
     midi_chords = []
     midi_data = [midi_notes, midi_chords]
-    if not glob.glob(train_data_path):
-        raise ValueError(f"No MIDI files found in {train_data_path}")
-    print(f"Found {len(glob.glob(train_data_path))} MIDI files")
-    print(f"Loading MIDI files from {train_data_path}")
-    for midi_file in tqdm(glob.glob(train_data_path)):
+    print(f"Found {len(glob.glob(midi_paths))} MIDI files")
+    print(f"Loading MIDI files from {midi_paths}")
+    for midi_file in tqdm(glob.glob(midi_paths)):
         midi = music21.converter.parse(midi_file)
         for ele in midi.flatten().notes:
             print(ele)
+
 
     tokenized_midi_data = []
     #midiデータをトークン化する
@@ -86,8 +98,10 @@ def main():
         print(model)
         #デバッグ用ここまで
         model.train()
-        #ここでデータを読み込んで学習する
-        tokenize_midi(train_data_path)
+        #データを読み込んでトークナイズ
+        midi_data_for_train = get_midi_list(train_data_path)
+        tokenize_midi(midi_data_for_train)
+        #学習する
         #ここで学習したモデルを保存
         torch.save(model.state_dict(), "./model.pt")
 
